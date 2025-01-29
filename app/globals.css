@@ -76,3 +76,7 @@ body {
     @apply font-extrabold bg-gradient-to-br from-orange-500 via-orange-300 to-orange-400 bg-clip-text tracking-tighter text-transparent pr-2 pb-2
   }
 }
+
+html{
+  scroll-behavior: smooth;
+}
