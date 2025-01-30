@@ -16,10 +16,18 @@ import {
 } from "@/components/ui/select";
 import { MOODS, getMoodById } from "@/lib/mood";
 import { Button } from "@/components/ui/button";
+import useFetch from "@/hooks/useFetch";
+import { createJournalEntry } from "@/actions/journal";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const JournalEntryPage = () => {
+  const {data,loading,error,fn:createJournalfn}=useFetch(createJournalEntry)
+
+  const router=useRouter();
+
   const {
     register,
     handleSubmit,
@@ -36,11 +44,25 @@ const JournalEntryPage = () => {
       collectionId: "",
     },
   });
-  const isLoading = false;
+  const isLoading = loading;
+  useEffect(()=>{
+    if(data && !loading){
+      router.push(`/collection/${data.collectionId ? data.collectionId :"unorganized"}`)
+      toast.success("Entry created successfully!")
+    }
+  },[data,loading])
   const moodValue = watch("mood");
 
   const onSubmit=handleSubmit(async(data)=>{
-    console.log(data);
+    const mood=getMoodById(data.mood)
+    createJournalfn({
+      ...data,
+      id:mood.id,
+      score:mood.score,
+      moodQuery:mood.pixabayQuery
+    })
+
+    console.log(data)
   })
 
   return (
