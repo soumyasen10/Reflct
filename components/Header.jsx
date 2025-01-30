@@ -2,11 +2,26 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { ChartColumn, FolderOpenIcon, PenBox } from "lucide-react";
+import { checkUser } from "@/lib/User";
 
-const Header = () => {
+const Header =() => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await checkUser();
+        setUser(userData);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
   return (
     <header className="container mx-auto ">
       <nav className="py-6 px-4 flex justify-between items-center">
