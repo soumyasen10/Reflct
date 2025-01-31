@@ -20,11 +20,18 @@ import useFetch from "@/hooks/useFetch";
 import { createJournalEntry } from "@/actions/journal";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { createCollection, getCollections } from "@/actions/collection";
+import { Plus } from "lucide-react";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const JournalEntryPage = () => {
+  const [isDialogOpen,setIsDialogOpen]=useState(false)
   const {data,loading,error,fn:createJournalfn}=useFetch(createJournalEntry)
+
+  const {data:collectionData,loading:collectionLoading,fn:getCollectionfn}=useFetch(getCollections)
+
+  const {data:createCollectionData,loading:createCollectionLoading,fn:createCollectionDatafn}=useFetch(createCollection)
 
   const router=useRouter();
 
@@ -45,6 +52,12 @@ const JournalEntryPage = () => {
     },
   });
   const isLoading = loading;
+
+  useEffect(()=>{
+    getCollectionfn()
+  },[])
+
+
   useEffect(()=>{
     if(data && !loading){
       router.push(`/collection/${data.collectionId ? data.collectionId :"unorganized"}`)
@@ -61,10 +74,9 @@ const JournalEntryPage = () => {
       score:mood.score,
       moodQuery:mood.pixabayQuery
     })
-
-    console.log(data)
   })
 
+  console.log("collections",collectionData)
   return (
     <div className="py-8">
       <form className="space-y-2 mx-auto" onSubmit={onSubmit}>
@@ -154,13 +166,41 @@ const JournalEntryPage = () => {
             Add to collection (optional)
           </label>
 
-          {/* <Controller
-            name="content"
+          <Controller
+            name="collectionId"
             control={control}
-            render={({ field }) => (
-            
-            )}
-          /> */}
+            render={({ field }) => {
+              return (
+                <Select onValueChange={(value)=>{
+                  if (value=='new'){
+                      setIsDialogOpen(true)
+                  }else{
+                    field.onChange(value)
+                  }
+                }} value={field.value}>
+                  <SelectTrigger className="w-[580px]">
+                    <SelectValue placeholder="Select a collection " />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {collectionData?.map((collection) => {
+                      return (
+                        <SelectItem key={collection.id} value={collection.id}>
+                          <span className="flex items-center gap-2">
+                            {collection.name}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
+                    <SelectItem value="new">
+                         <span className="text-orange-600 flex items-center gap-2">
+                         <Plus className="h-4 w-4"/>Create new Collection
+                         </span>
+                        </SelectItem>
+                  </SelectContent>
+                </Select>
+              );
+            }}
+          />
            {errors.collectionId && <p className="text-sm text-red-500">{errors.collectionId.message}</p>}
         </div>
 
