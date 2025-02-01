@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createCollection, getCollections } from "@/actions/collection";
 import { Plus } from "lucide-react";
+import CollectionForm from "@/components/CollectionForm";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -39,6 +40,7 @@ const JournalEntryPage = () => {
     register,
     handleSubmit,
     getValues,
+    setValue,
     watch,
     control,
     formState: { errors },
@@ -51,7 +53,6 @@ const JournalEntryPage = () => {
       collectionId: "",
     },
   });
-  const isLoading = loading;
 
   useEffect(()=>{
     getCollectionfn()
@@ -76,7 +77,21 @@ const JournalEntryPage = () => {
     })
   })
 
-  console.log("collections",collectionData)
+  useEffect(()=>{
+    if(createCollectionData){
+      setIsDialogOpen(false)
+      getCollectionfn()
+      setValue("collectionId",createCollectionData?.id);
+      toast.success(`Collection ${createCollectionData?.name} created!`)
+      
+    }
+  },[createCollectionData])
+
+  const handleCreateCollection=async(data)=>{
+    createCollectionDatafn(data)
+  }
+
+  const isLoading = loading || collectionLoading;
   return (
     <div className="py-8">
       <form className="space-y-2 mx-auto" onSubmit={onSubmit}>
@@ -210,6 +225,8 @@ const JournalEntryPage = () => {
           </Button>
         </div>
       </form>
+
+      <CollectionForm loading={createCollectionLoading} onsuccess={handleCreateCollection} open={isDialogOpen} setOpen={setIsDialogOpen}/>
     </div>
   );
 };

@@ -80,6 +80,6 @@ export async function getCollections() {
     },
     orderBy: { createdAt: "desc" },
   });
-  revalidatePath("/dashboard");
+  
   return collections;
 }
