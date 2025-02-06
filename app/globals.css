@@ -97,3 +97,18 @@ html{
 .ql-toolbar{
   border-radius: 5px;
 }
+
+::-moz-selection {
+  background: #fb923f;
+  color: black;
+}
+::-webkit-selection {
+  background: #fb923f;
+  color: black;
+}
+
+::selection {
+  background: #fb923f;
+  color: black;
+
+}

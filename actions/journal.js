@@ -131,3 +131,42 @@ export async function getJournalEntries({collectionId}={}){
         return {success:false,error:error.message}
     }
 }
+
+export async function getJournalEntry(id){
+    try {
+        const {userId}=await auth();
+        if(!userId){
+            throw new Error("UnAuthorized!")
+        }
+
+        const user=await db.user.findUnique({
+            where:{
+                clerkUserId:userId
+            }
+        })
+        if(!user){
+            throw new Error("User Not Found!")
+        }
+
+        const entry=await db.entry.findFirst({
+            where:{
+                id,
+                userId:user.id
+            },
+            include:{
+                collection:{
+                    select:{
+                        id:true,
+                        name:true
+                    }
+                }
+            }
+        })
+
+        if(!entry) throw new Error("Entry not found!")
+
+        return entry;
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}

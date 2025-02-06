@@ -26,7 +26,6 @@ const Collections = ({collections=[],entriesBycollection}) => {
         createCollectionDatafn(data);
     }
 
-    console.log("entriesBycollection",entriesBycollection)
 
     if(collections.length === 0) return <></>
   return (
