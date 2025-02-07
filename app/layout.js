@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/Header';
 import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from 'sonner';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const inter=Inter({subset:["latin"]})
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className}`}
       >
+        <ThemeProvider>
         <Header/>
         <div className="bg-[url('/bg.jpg')] fixed opacity-60 -z-10 inset-0"/>
         <main className='min-h-screen'>
@@ -29,6 +31,7 @@ export default function RootLayout({ children }) {
             <p>Made With 💖 by Zayan</p>
           </div>
         </footer>
+        </ThemeProvider>
       </body>
     </html>
     </ClerkProvider>

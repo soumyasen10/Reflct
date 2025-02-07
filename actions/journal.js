@@ -170,3 +170,173 @@ export async function getJournalEntry(id){
         throw new Error(error.message)
     }
 }
+
+export async function deleteJournalEntry({id}) {
+    try {
+      const { userId } = await auth();
+    if (!userId) {
+      throw new Error("UnAuthorized!");
+    }
+  
+    const user = await db.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) {
+      throw new Error("User Not Found!");
+    }
+  
+    const entry = await db.entry.findUnique({
+      where: {
+        userId: user.id,
+        id
+      }
+    });
+  
+    if(!entry) throw new Error("Entry not found!")
+  
+    await db.entry.delete({
+      where:{
+        id
+      }
+    })
+    
+    revalidatePath('/dashboard')
+    return entry;
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+
+
+export async function updateJournalEntry({data}) {
+    try {
+      const { userId } = await auth();
+    if (!userId) {
+      throw new Error("UnAuthorized!");
+    }
+  
+    const user = await db.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) {
+      throw new Error("User Not Found!");
+    }
+  
+    const ExistingEntry = await db.entry.findUnique({
+      where: {
+        userId: user.id,
+        id:data.id
+      }
+    });
+  
+    if(!ExistingEntry) throw new Error("Entry not found!")
+  
+    const mood=MOODS[data.mood.toUpperCase()]
+        if(!mood){
+            throw new Error("Invalid mood")
+        }
+
+        let moodImageUrl=ExistingEntry.moodImageUrl
+
+        if(ExistingEntry.mood !==mood.id){
+            moodImageUrl= await getPixabayImage(data.moodQuery)
+        }
+         
+
+        const entry=await db.entry.update({
+            where:{id:data.id},
+            data:{
+                title:data.title,
+                content:data.content,
+                mood:data.id,
+                moodScore:data.score,
+                moodImageUrl,
+                collectionId:data.collectionId || null
+            }
+        })
+
+    
+    revalidatePath('/dashboard')
+    revalidatePath(`/journal/${data.id}`)
+    return entry;
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+
+
+
+export async function getDraft() {
+    try {
+      const { userId } = await auth();
+    if (!userId) {
+      throw new Error("UnAuthorized!");
+    }
+  
+    const user = await db.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) {
+      throw new Error("User Not Found!");
+    }
+  
+    const draft = await db.draft.findUnique({
+      where: {
+        userId: user.id
+      }
+    });
+    
+    return {success:true,data:draft};
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+
+
+
+export async function saveDraft({data}) {
+    try {
+      const { userId } = await auth();
+    if (!userId) {
+      throw new Error("UnAuthorized!");
+    }
+  
+    const user = await db.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) {
+      throw new Error("User Not Found!");
+    }
+  
+    const draft = await db.draft.upsert({
+      where: {
+        userId: user.id
+      },
+      create:{
+        title:data.title,
+        content:data.content,
+        mood:data.mood,
+        userId:user.id
+      },
+      update:{
+        title:data.title,
+        content:data.content,
+        mood:data.mood,
+      }
+    });
+    
+    revalidatePath('/dashboard')
+    return {success:true,data:draft};
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+

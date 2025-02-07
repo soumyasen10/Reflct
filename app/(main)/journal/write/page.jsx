@@ -17,18 +17,26 @@ import {
 import { MOODS, getMoodById } from "@/lib/mood";
 import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/useFetch";
-import { createJournalEntry } from "@/actions/journal";
-import { useRouter } from "next/navigation";
+import { createJournalEntry, getDraft, getJournalEntry, saveDraft, updateJournalEntry } from "@/actions/journal";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { createCollection, getCollections } from "@/actions/collection";
 import { Plus } from "lucide-react";
 import CollectionForm from "@/components/CollectionForm";
-
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const JournalEntryPage = () => {
+  const searchParams=useSearchParams();
+  const editId=searchParams.get("edit")
+  const [isEditMode,setIsEditMode]=useState(false)
   const [isDialogOpen,setIsDialogOpen]=useState(false)
-  const {data,loading,error,fn:createJournalfn}=useFetch(createJournalEntry)
+  const {data,loading,error,fn:createJournalfn}=useFetch(isEditMode?updateJournalEntry:createJournalEntry)
+
+  const { loading:entryLoading,data:existingEntry,fn:fetchEntryfn}=useFetch(getJournalEntry);
+
+  const { loading:draftLoading,data:draftData,fn:fetchDraftfn}=useFetch(getDraft)
+
+  const { loading:savingDraft,fn:saveDraftfn}=useFetch(saveDraft)
 
   const {data:collectionData,loading:collectionLoading,fn:getCollectionfn}=useFetch(getCollections)
 
@@ -40,6 +48,7 @@ const JournalEntryPage = () => {
     register,
     handleSubmit,
     getValues,
+    reset,
     setValue,
     watch,
     control,
@@ -56,15 +65,57 @@ const JournalEntryPage = () => {
 
   useEffect(()=>{
     getCollectionfn()
-  },[])
+
+    if(editId){
+      setIsEditMode(true)
+      fetchEntryfn()
+    }else{
+      setIsEditMode(false)
+      fetchDraftfn()
+    }
+  },[editId])
+
+  useEffect(()=>{
+    if(isEditMode && existingEntry){
+      reset({
+        title:existingEntry.title || "",
+        content:existingEntry.content || "",
+        mood:existingEntry.mood || "",
+        collectionId:existingEntry.collectionId || "",
+      })
+    }
+    else if(draftData?.success && draftData?.data){
+      reset({
+        title: draftData.data.title || "",
+        content: draftData.data.content || "",
+        mood: draftData.data.mood || "",
+        collectionId:"",
+      })
+    }else{
+      reset({
+        title: "",
+        content:"",
+        mood: "",
+        collectionId:"",
+      })
+    }
+  },[draftData,isEditMode,existingEntry])
 
 
   useEffect(()=>{
     if(data && !loading){
+
+      if(!isEditMode){
+        //clearing the draft when create new
+        saveDraft({title:"",content:"",mood:""})
+      }
+
+
       router.push(`/collection/${data.collectionId ? data.collectionId :"unorganized"}`)
-      toast.success("Entry created successfully!")
+      toast.success(`Entry ${isEditMode?"update":"created"} successfully!`)
     }
   },[data,loading])
+
   const moodValue = watch("mood");
 
   const onSubmit=handleSubmit(async(data)=>{
@@ -73,7 +124,8 @@ const JournalEntryPage = () => {
       ...data,
       id:mood.id,
       score:mood.score,
-      moodQuery:mood.pixabayQuery
+      moodQuery:mood.pixabayQuery,
+      ...(isEditMode && {id:editId})
     })
   })
 
@@ -91,12 +143,12 @@ const JournalEntryPage = () => {
     createCollectionDatafn(data)
   }
 
-  const isLoading = loading || collectionLoading;
+  const isLoading = loading || collectionLoading || entryLoading || draftLoading || savingDraft;
   return (
     <div className="py-8">
       <form className="space-y-2 mx-auto" onSubmit={onSubmit}>
         <h1 className="text-5xl md:text-6xl gradient-title" >
-          What&apos;s on your mind?
+          {isEditMode?"Edit Entry":"What's on your mind?"}
         </h1>
         {isLoading && <BarLoader color="orange" width={"100%"} />}
 
@@ -219,10 +271,20 @@ const JournalEntryPage = () => {
            {errors.collectionId && <p className="text-sm text-red-500">{errors.collectionId.message}</p>}
         </div>
 
-        <div className="spacr-y-4 flex ">
+        <div className="space-x-4 flex ">
           <Button  type="submit" variant="orange">
-          Submit
+          {isEditMode?"Update":"Submit"}
           </Button>
+
+          {isEditMode && (
+            <Button onClick={(e)=>{
+              e.preventDefault();
+              router.push(`/journal/${existingEntry.id}`)
+            }}
+            >
+              Cancel
+            </Button>
+          )}
         </div>
       </form>
 
