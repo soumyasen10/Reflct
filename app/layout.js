@@ -3,9 +3,8 @@ import './globals.css';
 import Header from '@/components/Header';
 import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from 'sonner';
-import { ThemeProvider } from '@/components/ThemeProvider';
 
-const inter = Inter({ subsets: ['latin'] }); // ✅ Corrected
+const inter = Inter({ subsets: ['latin'], preload: false });
 
 export const metadata = {
   title: "Reflct",
@@ -17,7 +16,6 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en">
         <body className={`${inter.className}`}>
-          <ThemeProvider>
             <Header />
             <div className="bg-[url('/bg.jpg')] fixed opacity-60 -z-10 inset-0" />
             <main className='min-h-screen'>{children}</main>
@@ -27,7 +25,6 @@ export default function RootLayout({ children }) {
                 <p>Made With 💖 by Zayan</p>
               </div>
             </footer>
-          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

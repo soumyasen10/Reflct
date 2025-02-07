@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { ChartColumn, FolderOpenIcon, PenBox } from "lucide-react";
 import { checkUser } from "@/lib/User";
-import { ThemeToggle } from "./ThemeToggle";
 
 const Header =() => {
   const [user, setUser] = useState(null);
@@ -36,8 +35,7 @@ const Header =() => {
           />
         </Link>
 
-        <div className="flex items-center gap-4">
-          <ThemeToggle/>         
+        <div className="flex items-center gap-4">        
           <SignedIn>
           <Link href='/dashboard#collections'>
           <Button variant="outline" className="flex items-center gap-2">
