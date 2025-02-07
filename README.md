@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Reflct - Journal Store WebApp ✨
 
-## Getting Started
+Reflct is a beautifully designed journaling web application that allows users to store and manage their personal journals with fancy emojis and mood tracking. Built with modern web technologies, it provides a seamless and interactive experience for users who want to keep track of their thoughts and emotions.
 
-First, run the development server:
+## 🚀 Features
+- 📖 **Journal Entries** - Store and manage your daily journal entries.
+- 🎭 **Mood Tracking** - Track your mood with expressive emojis.
+- 🎨 **Beautiful UI** - Styled with Tailwind CSS and ShadCN UI.
+- ⚡ **Fast & Responsive** - Built with Next.js for a smooth experience.
+- 🛡 **Validation & Forms** - Uses React Hook Form with Zod for robust validation.
+- 🗄 **Database** - Powered by NeonDB (PostgreSQL) with Prisma ORM.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠 Tech Stack
+- **Framework:** Next.js
+- **UI Components:** ShadCN UI
+- **Styling:** Tailwind CSS
+- **Database:** NeonDB (PostgreSQL)
+- **ORM:** Prisma
+- **Authentication:** Clerk
+- **Forms & Validation:** React Hook Form & Zod
+- **Rate limiting & Bot Protection** Arcjet
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔧 Installation
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/soumyasen10/Reflct.git
+   cd reflct
+2. **Install dependencies:**
+   ```bash
+   npm install --legacy-peer-deps
+3. **Set up environment variables:**
+   ```bash
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+    CLERK_SECRET_KEY=
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL=
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL=
 
-## Learn More
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=
 
-To learn more about Next.js, take a look at the following resources:
+    DATABASE_URL=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    ARCJET_KEY=
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    PIXABAY_API_KEY=
+4. **Push Prisma schema to the database:**
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+5. **Start the development server:**
+   ```bash
+   npm run dev
 
-## Deploy on Vercel
+## 📸 Screenshots
+![image](https://github.com/user-attachments/assets/6d3da407-7786-4755-ba7d-1f2a054d6125)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📞 Contact
+- **For any queries, reach out to [soumyasenofficial@gmail.com] or open an issue on GitHub.**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
