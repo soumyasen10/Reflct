@@ -5,7 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
-const inter=Inter({subset:["latin"]})
+const inter=Inter({subsets:["latin"]})
 
 export const metadata = {
   title: "Reflct",
