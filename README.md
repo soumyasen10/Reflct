@@ -55,6 +55,8 @@ Reflct is a beautifully designed journaling web application that allows users to
 
 ## 📸 Screenshots
 ![image](https://github.com/user-attachments/assets/6d3da407-7786-4755-ba7d-1f2a054d6125)
+![image](https://github.com/user-attachments/assets/9dd3c283-d14d-4111-a3b5-e71c145fab0f)
+
 
 ## 📞 Contact
 - **For any queries, reach out to [soumyasenofficial@gmail.com] or open an issue on GitHub.**
